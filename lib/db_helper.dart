@@ -36,7 +36,7 @@ class DBHelper {
 
   Future<List<Student>> getStudents(int cls) async {
     var dbClient = await db;
-    List<Map> map = await dbClient.rawQuery('select * from student where cls=?', [cls]);
+    List<Map> map = await dbClient.rawQuery('select * from student where cls=? ORDER BY name ASC', [cls]);
     List<Student> students = [];
     if (map.length > 0) {
       for (int i = 0; i < map.length; i++) {
