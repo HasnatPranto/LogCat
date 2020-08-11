@@ -19,12 +19,12 @@ class _DashboardState extends State<Dashboard> {
                   gradient: LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.topRight,
-                      colors: [Color(0xffb6eb7a),Color(0xff17706e)],
+                      colors: [Color(0xff3a7bd5),Color(0xff3B4371)],
                   ),
               ),
             ),
-            title: Text(" LogCat", textAlign: TextAlign.center, style: TextStyle(color:Colors.green[900],fontSize: 35,fontFamily: 'Lobster'),),
-        elevation: .1,
+            title: Text(" LogCat", textAlign: TextAlign.center, style: TextStyle(color:Color(0xff360033),fontSize: 35,fontFamily: 'Lobster'),),
+        elevation: 5,
         actions: <Widget>[
           IconButton(
             icon: Icon(
@@ -40,10 +40,18 @@ class _DashboardState extends State<Dashboard> {
         ]),
 
       body: Container(
-        color: Colors.white,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+              colors: [Color(0xff4389A2),Color(0xff5C258D)]
+            // colors: [Color(0xfffdbb2d),Color(0xffb21f1f),Color(0xff1a2a6c)]
+          )
+        ),
         padding: EdgeInsets.symmetric(vertical: 18.0, horizontal: 2.0),
         child: GridView.count(
           crossAxisCount: 2,
+          childAspectRatio: .95,
           padding: EdgeInsets.all(7.0),
           children: <Widget>[
             makeDashboardItem("Class VI", Icons.filter_6,230,0,51),
@@ -57,19 +65,19 @@ class _DashboardState extends State<Dashboard> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => FormPage()));
-          // Add your onPressed code here!
+              context, MaterialPageRoute(builder: (context) => FormPage()));// Add your onPressed code here!
         },
 
         child: Icon(Icons.person_add),
-        backgroundColor: Colors.green[800],
+        backgroundColor: Color(0xff52c234),
         splashColor: Colors.green[900],
       ),
     );
   }
 
-  Card makeDashboardItem(String title, IconData icon, int r, int g, int b) {
-   return Card(
+  Widget makeDashboardItem(String title, IconData icon, int r, int g, int b) {
+
+    return Card(
         color: Colors.transparent,
         shape:
         RoundedRectangleBorder(
@@ -80,11 +88,12 @@ class _DashboardState extends State<Dashboard> {
         margin: new EdgeInsets.all(5.0),
           child: Ink(
             decoration: BoxDecoration(
-              gradient: LinearGradient(
+             /* gradient: LinearGradient(
                 begin: Alignment.bottomRight,
                 end: Alignment.topLeft,
                 colors: [Color.fromRGBO(r,g,b,1.0),Color.fromRGBO(r,g,b,.7)]
-              ),
+              ),*/
+             color: Colors.white30,
               //color: Color.fromRGBO(r,g,b,1.0),
               borderRadius: BorderRadius.all(Radius.circular(10.0)),
             ),
@@ -114,17 +123,21 @@ class _DashboardState extends State<Dashboard> {
                 children: <Widget>[
                   SizedBox(height: 50.0),
                   Center(
-                    child: Icon(
-                      icon,
-                      size: 40.0,
-                      color:Colors.white,
-                    ) ,
+                    child: CircleAvatar(
+                      radius: 35,
+                      backgroundColor: Color.fromRGBO(r, g, b, 1),
+                      child: Icon(
+                        icon,
+                        size: 30.0,
+                        color:Colors.white,
+                      ) ,
+                    )
                   ),
-                  SizedBox(height: 20.0),
+                  SizedBox(height: 15.0),
                   new Center(
                     child: new Text(title,
                         style:
-                        new TextStyle(fontSize: 20.0, color: Colors.white)),
+                        new TextStyle(fontSize: 17.0, color: Colors.white)),
                   )
                 ],
               ),

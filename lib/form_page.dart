@@ -1,7 +1,13 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:student_rec/db_helper.dart';
 import 'package:student_rec/student_model.dart';
+
+import 'class_page.dart';
 
 class FormPage extends StatefulWidget {
   @override
@@ -10,9 +16,13 @@ class FormPage extends StatefulWidget {
 
 class _FormPageState extends State<FormPage> {
 
+  List<int> bytes=[];
+
+  Widget cava= CircleAvatar(backgroundColor:Colors.blueGrey[100], radius:45,child:Icon(Icons.account_circle,size: 60,color: Colors.black12,));
   final _formKey = GlobalKey<FormState>();
-  String _studentName,_studentCls,_studentRoll,_studentGrp,_studentGN,_studentPN,_studentSection;
+  String _studentName,_studentCls,_studentRoll,_studentGrp,_studentGN,_studentPN,_studentSection,imgStr="",year;
   DBHelper dbHelper;
+   bool imgExist=false;
 
   @override
   void initState() {
@@ -20,8 +30,56 @@ class _FormPageState extends State<FormPage> {
     dbHelper = DBHelper();
   }
 
+  Widget sheetRow(BuildContext context, String text, int opt){
+    return InkWell(
+        onTap: () {
+          switch(opt){
+            case 1: Navigator.pop(context); chooseImage();
+                    break;
+            case 2: Navigator.pop(context);
+                    setState(() {
+                      cava= CircleAvatar(backgroundColor:Colors.white30, radius:45,child:Icon(Icons.account_circle));
+                      imgExist=false;
+                      imgStr="";
+                    });
+            }
+        },
+        child: Row(
+          children: <Widget>[
+            Padding( padding: const EdgeInsets.all(18)),
+            Text(text, style: TextStyle(fontSize: 14),),
+          ],
+        ),
+      );
+  }
+  void  bottomMenu(BuildContext context){
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => Wrap(
+        children: <Widget>[
+         sheetRow(context,'Choose another picture',1),
+          sheetRow(context,'Remove picture',2),
+        ],
+      ),
+    );
+  }
+  Future chooseImage() async{
+
+     var image= await ImagePicker.pickImage(source: ImageSource.gallery);
+     bytes = image.readAsBytesSync();
+
+     setState(() {
+      imgStr=base64.encode(bytes);
+      imgExist = true;
+      cava = CircleAvatar(
+          radius: 45,
+          backgroundImage: new FileImage(image)); // backgroundImage: Image.memory(_bytesImage).image
+     });
+  }
+
   @override
   Widget build(BuildContext context) {
+
     return  Scaffold(
         appBar: AppBar(
           title: Text('New Student Entry', style: TextStyle(fontSize: 25,fontFamily: 'Arista')),
@@ -58,6 +116,18 @@ class _FormPageState extends State<FormPage> {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           Text('Fill Out Student Info',style: TextStyle(fontFamily:'Sofia',fontWeight:FontWeight.bold,color: Colors.black87,fontSize: 30)),
+                          SizedBox(height: 20,),
+                          Center(
+                            child: InkWell(
+                                child: cava,
+                                onTap: (){
+                                  if(!imgExist)
+                                  chooseImage();
+                                  else
+                                    bottomMenu(context);
+                                },
+                            )
+                          ),
                           SizedBox(height: 20,),
                           TextFormField(
                             style: TextStyle(color: Colors.deepPurpleAccent),
@@ -110,6 +180,34 @@ class _FormPageState extends State<FormPage> {
                             },
                             onSaved: (value) =>
                                 setState(() => _studentCls = value),
+                          ),
+                          SizedBox(height: 20),
+
+                          TextFormField(
+                            style: TextStyle(color: Colors.deepPurpleAccent),
+                            decoration:
+                            InputDecoration(
+                              labelText: 'Year',
+                              hintText: 'e.g 2010',
+                              border: new OutlineInputBorder(
+                                  borderRadius: new BorderRadius.circular(15.0),
+                                  borderSide: new BorderSide()
+                              ),
+                              focusedBorder:OutlineInputBorder(
+                                borderSide: const BorderSide(color: Colors.pink, width: 2.0),
+                                borderRadius: BorderRadius.circular(25.0),
+                              ),
+                            ),
+                            keyboardType: TextInputType.number,
+                            inputFormatters: <TextInputFormatter>[
+                              WhitelistingTextInputFormatter.digitsOnly],
+                            validator: (value) {
+                              if (value.isEmpty) {
+                                return 'Please enter the year';
+                              }
+                            },
+                            onSaved: (value) =>
+                                setState(() => year = value),
                           ),
                           SizedBox(height: 20),
 
@@ -240,12 +338,14 @@ class _FormPageState extends State<FormPage> {
                         ]))))),
        floatingActionButton: new Builder(builder: (BuildContext context) {
           return new FloatingActionButton.extended(
-              onPressed: () {
+              onPressed: () async {
             final form = _formKey.currentState;
             if (form.validate()) {
               form.save();
-              dbHelper.add(Student(null, _studentName,_studentRoll,_studentCls,_studentSection,_studentGrp,_studentGN,_studentPN));
+              dbHelper.add(Student(null, _studentName,imgStr,_studentRoll,_studentCls,year,_studentSection,_studentGrp,_studentGN,_studentPN));
               Scaffold.of(context).showSnackBar(SnackBar(content: Text('One New Entry Added..')));
+              await Future.delayed(Duration(milliseconds: 2000), () {});
+              Navigator.pop(context);
             }
           },label: Text('Confirm'),icon: Icon(Icons.done),backgroundColor: Colors.pink,splashColor: Colors.yellow);
         }));

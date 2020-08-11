@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:student_rec/Edit_page.dart';
@@ -16,17 +19,63 @@ class StudentDetail extends StatefulWidget{
     return DetailState(student);
   }
 }
+class fullSize extends StatelessWidget{
+  String imageString;
+  fullSize({Key key,this.imageString}) : super(key:key);
+  var _fi;
+
+  @override
+  Widget build(BuildContext context) {
+
+    _fi= Image.memory(base64Decode(imageString));
+
+    // TODO: implement build
+    return Scaffold(
+      body: Container(
+          padding: EdgeInsets.fromLTRB(0, 25, 0, 25),
+          color: Colors.black,
+          child: GestureDetector(
+            child: Container(
+              decoration: BoxDecoration(
+                  image: DecorationImage(
+                      image: _fi.image,
+                      fit: BoxFit.contain
+                  )
+              ),
+            ),
+            onTap: (){
+              Navigator.pop(context);
+            },
+          )
+      )
+    );
+  }
+}
 class DetailState extends State<StudentDetail> {
   Student student;
   DBHelper dbHelper;
-
+  var _image;
   DetailState(Student student){
     this.student=student;
     dbHelper=DBHelper();
 
   }
   @override
+  void initState() {
+    super.initState();
+    if(student.image!=""){
+      setState(() {
+        _image= Image.memory(base64Decode(student.image));
+      });
+    }
+    else{
+      _image = Image.asset('assets/images/unidentified.png');
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+
     // TODO: implement build
     return Scaffold(
         appBar: AppBar(
@@ -63,34 +112,80 @@ class DetailState extends State<StudentDetail> {
            ),
            child: ListView(
              children: <Widget>[
-               Text('Name',style: TextStyle(color:Color(0xff363062),fontSize: 22,),),
-               SizedBox(height: 6,),
-               Text(student.name,style: TextStyle(fontSize: 27,fontFamily:'Josefin')),
-               SizedBox(height: 6,),
-               Text('Class',style: TextStyle(color:Color(0xff363062),fontSize: 22,),),
-               SizedBox(height: 6,),
-               Text(student.cls,style: TextStyle(fontSize: 27,fontFamily:'Josefin')),
-               SizedBox(height: 6,),
-              Text('Section',style: TextStyle(color:Color(0xff363062),fontSize: 22,),),
-               SizedBox(height: 6,),
-               Text(student.sec,style: TextStyle(fontSize: 27,fontFamily:'Josefin')),
-               SizedBox(height: 6,),
-               Text('Group',style: TextStyle(color:Color(0xff363062),fontSize: 22,)),
-               SizedBox(height: 6,),
-               Text(student.grp,style: TextStyle(fontSize: 27,fontFamily:'Josefin')),
-               SizedBox(height: 6,),
-               Text('Roll',style: TextStyle(color:Color(0xff363062),fontSize: 22,)),
-               SizedBox(height: 6,),
-               Text(student.roll,style: TextStyle(fontSize: 27,fontFamily:'Josefin')),
-               SizedBox(height: 6,),
-               Text('Contact No.(Student)',style: TextStyle(color:Color(0xff363062),fontSize: 22)),
-               SizedBox(height: 6,),
-               Text(student.pp,style: TextStyle(fontSize: 27,fontFamily:'Josefin')),
-               SizedBox(height: 6,),
-               Text('Contact No.(Guardian)',style: TextStyle(color:Color(0xff363062),fontSize: 22)),
-               SizedBox(height: 6,),
-               Text(student.gp,style: TextStyle(fontSize: 27,fontFamily:'Josefin')),
-               SizedBox(height: 6,)
+                   Stack(
+                     alignment: Alignment.topRight,
+                     children: <Widget>[
+                       Column(
+                         crossAxisAlignment: CrossAxisAlignment.stretch,
+                           children: <Widget>[
+                             SizedBox(height: 10) ,
+                         Text('Name',style: TextStyle(color:Color(0xff363062),fontSize: 22,)),
+                         SizedBox(height: 6,),
+                         Text(student.name,style: TextStyle(fontSize: 27,fontFamily:'Josefin')),
+                         SizedBox(height: 6,),
+                         Text('Class',style: TextStyle(color:Color(0xff363062),fontSize: 22,),),
+                         SizedBox(height: 6,),
+                         Text(student.cls,style: TextStyle(fontSize: 27,fontFamily:'Josefin')),
+                         SizedBox(height: 6,),
+                         Text('Year',style: TextStyle(color:Color(0xff363062),fontSize: 22,)),
+                         SizedBox(height: 6),
+                         Text(student.year,style: TextStyle(fontSize: 27,fontFamily:'Josefin')),
+                         SizedBox(height: 6),
+                         Text('Section',style: TextStyle(color:Color(0xff363062),fontSize: 22,),),
+                         SizedBox(height: 6,),
+                         Text(student.sec,style: TextStyle(fontSize: 27,fontFamily:'Josefin')),
+                         SizedBox(height: 6,),
+                         Text('Group',style: TextStyle(color:Color(0xff363062),fontSize: 22,)),
+                         SizedBox(height: 6,),
+                         Text(student.grp,style: TextStyle(fontSize: 27,fontFamily:'Josefin')),
+                         SizedBox(height: 6,),
+                         Text('Roll',style: TextStyle(color:Color(0xff363062),fontSize: 22,)),
+                         SizedBox(height: 6,),
+                         Text(student.roll,style: TextStyle(fontSize: 27,fontFamily:'Josefin')),
+                         SizedBox(height: 6,),
+                         Text('Contact No.(Student)',style: TextStyle(color:Color(0xff363062),fontSize: 22)),
+                         SizedBox(height: 6,),
+                         Text(student.pp,style: TextStyle(fontSize: 27,fontFamily:'Josefin')),
+                         SizedBox(height: 6,),
+                         Text('Contact No.(Guardian)',style: TextStyle(color:Color(0xff363062),fontSize: 22)),
+                         SizedBox(height: 6,),
+                         Text(student.gp,style: TextStyle(fontSize: 27,fontFamily:'Josefin')),
+                         SizedBox(height: 6,)
+                       ]),
+                       Positioned(
+                           right: 15,
+                           child: GestureDetector(
+                             child: Container(
+                               height: 115.0,
+                               width: 105.0,
+                               decoration: BoxDecoration(
+                                 borderRadius: BorderRadius.only(topLeft:Radius.circular(5),bottomRight:Radius.circular(5),bottomLeft:Radius.circular(5),topRight:Radius.circular(20)),
+                                 border: Border.all(width:2,color: Color(0xff4b6cb7)),
+                                 image: DecorationImage(
+                                   image: _image.image,
+                                   fit: BoxFit.fill,
+                                 ),
+                                 // shape: BoxShape.circle,
+                               ),
+                             ),
+                             onTap: () {
+                               if(student.image==""){
+                                 Flushbar(
+                                   message:  "No image to show!",
+                                   duration:  Duration(seconds: 2),
+                                 )..show(context);
+                               }
+                               else {
+                                 Navigator.push(
+                                     context, MaterialPageRoute(
+                                     builder: (context) =>
+                                         fullSize(imageString: student.image)));
+                                }
+                               },
+                           )
+                       ),
+                     ],
+                   ),
              ],
            ),
          )
@@ -155,7 +250,6 @@ class DetailState extends State<StudentDetail> {
               FlatButton(
                 child: Text("Return"),
                 onPressed: () {
-                  //Put your code here which you want to execute on Cancel button click.
                   Navigator.of(context).pop();
                 },
               ),

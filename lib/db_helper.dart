@@ -25,7 +25,7 @@ class DBHelper {
   _onCreate(Database db, int version) async {
     await db.execute("DROP TABLE IF EXISTS student");
     await db
-        .execute('CREATE TABLE student (id INTEGER PRIMARY KEY, name TEXT, roll TEXT, cls TEXT, sec TEXT, grp TEXT, gp TEXT, pp TEXT)');
+        .execute('CREATE TABLE student (id INTEGER PRIMARY KEY, name TEXT, image TEXT, roll TEXT, cls TEXT, year TEXT, sec TEXT, grp TEXT, gp TEXT, pp TEXT)');
   }
 
   Future<Student> add(Student student) async {

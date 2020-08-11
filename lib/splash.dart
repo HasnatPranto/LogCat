@@ -26,7 +26,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<bool> _mockCheckForSession() async {
-    await Future.delayed(Duration(milliseconds: 4000), () {});
+    await Future.delayed(Duration(milliseconds: 3000), () {});
 
     return true;
   }
@@ -44,9 +44,9 @@ class _SplashScreenState extends State<SplashScreen> {
       body: Container(
           decoration: BoxDecoration(
               gradient: LinearGradient(
-                  begin: Alignment.topRight,
-                  end: Alignment.bottomLeft,
-                  colors: [Color(0xffc4e86b),Color(0xff00a399)])
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [Color(0xffFFFDE4),Color(0xff005AA7)])
           ),
         child: Column(
           children: <Widget>[
@@ -57,7 +57,7 @@ class _SplashScreenState extends State<SplashScreen> {
               child: Shimmer.fromColors(
                 period: Duration(milliseconds: 1500),
                 baseColor: Colors.white,
-                highlightColor: Colors.black26,
+                highlightColor: Color(0xff03001e),
                 child: Container(
                   padding: EdgeInsets.fromLTRB(16, 10, 16, 5),
                   child:
@@ -77,7 +77,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 style: TextStyle(
                   fontSize: 20.0,
                   fontFamily: 'ubuntu',
-                  color: Colors.white,
+                  color: Color(0xff03001e),
                 ),
               ),
             ),

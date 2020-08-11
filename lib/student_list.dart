@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -18,7 +19,7 @@ class StudentList extends StatefulWidget{
 }
 class _studentListState extends State<StudentList>{
   TextEditingController filter = new TextEditingController();
-  String searhText="";
+  String searhText="",sec="";
   int sc;
   List<Student> fullList=List<Student>();
   List<Student> filteredList=List<Student>();
@@ -48,13 +49,42 @@ class _studentListState extends State<StudentList>{
   void searchByName(String value) async{
 
     var stu= await dbHelper.getStudents(sc);
-
     setState(() {
       fullList = stu;
     });
     setState(() {
       filteredList=fullList.where((test)=>test.name.toLowerCase().contains(value.toLowerCase())).toList();});
   }
+
+  Widget resolveSub(Student student){
+
+    if(sc<9){
+     return Text('Section: '+student.sec+'      Roll: '+student.roll,style: TextStyle(fontSize: 15,color: Color(0xff342b38)));
+    }
+    else{
+     return Text('Group: '+student.grp+'        Roll: '+student.roll,style: TextStyle(fontSize: 15,color: Color(0xff342b38)));
+    }
+  }
+
+  Widget resolveAvatar(Student student){
+
+    if(student.image!=""){
+      return  CircleAvatar(
+        radius: 23,
+        backgroundColor: Colors.deepPurpleAccent,
+        child: CircleAvatar(
+          radius: 21,
+          backgroundImage: MemoryImage(base64Decode(student.image)),
+        ),
+      );
+    }
+       // backgroundImage: MemoryImage(base64Decode(student.image)));}
+    else
+      return CircleAvatar(
+          backgroundColor: Colors.primaries[Random().nextInt(Colors.primaries.length)],
+          child: Icon(Icons.person_outline));
+  }
+
   @override  Widget build(BuildContext context) {
 
     return Scaffold(
@@ -127,12 +157,14 @@ class _studentListState extends State<StudentList>{
                                     )
                                 ),
                                   child: InkWell (child:  ListTile(
-                                  leading: CircleAvatar(
+                                  leading: resolveAvatar(filteredList[index]),/*CircleAvatar(
+                                    backgroundImage: MemoryImage(base64Decode(filteredList[index].image)),
                                     backgroundColor: Colors.primaries[Random().nextInt(Colors.primaries.length)],
-                                    child: Icon(Icons.person_outline),
-                                  ),
+                                    child: //Icon(Icons.person_outline),*/
+
                                   title: Text(filteredList[index].name,style: TextStyle(fontSize: 20,color: Color(0xff342b38)),),
-                                  subtitle: Text('Contact No. '+filteredList[index].pp,style: TextStyle(fontSize: 15,color: Color(0xff342b38)),),
+                                 subtitle: resolveSub(filteredList[index]),
+                                  //subtitle: Text('Contact No. '+filteredList[index].pp,style: TextStyle(fontSize: 15,color: Color(0xff342b38)),),
                                   onTap: (){
                                     Navigator.push(
                                         context, MaterialPageRoute(builder: (context) => StudentDetail(student: filteredList[index]))).then((value){
