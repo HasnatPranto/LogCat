@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -20,6 +21,7 @@ class _editPageState extends State<EditPage> {
   Student student;
   DBHelper dbHelper;
   FileImage img;
+  var _image;
   Widget cava;
   List<int> bytes;
   bool imgExist = true;
@@ -43,7 +45,7 @@ class _editPageState extends State<EditPage> {
        backgroundColor: Colors.deepPurpleAccent,
        child: CircleAvatar(
          radius: 48,
-       backgroundImage: MemoryImage(base64Decode(student.image)))
+       backgroundImage: FileImage(File(imgStr)))
     );
     }
     else{
@@ -58,10 +60,10 @@ class _editPageState extends State<EditPage> {
   Future chooseImage() async{
 
     var image= await ImagePicker.pickImage(source: ImageSource.gallery);
-    bytes= image.readAsBytesSync();
+   // bytes= image.readAsBytesSync();
 
     setState(() {
-      imgStr=base64.encode(bytes);
+      imgStr= image.path;
       imgExist = true;
       cava = CircleAvatar(
           radius: 50,
@@ -70,6 +72,13 @@ class _editPageState extends State<EditPage> {
   }
   Widget sheetRow(BuildContext context, String text, int opt){
     return InkWell(
+      child: Row(
+        children: <Widget>[
+          Padding( padding: const EdgeInsets.only(left:30,top:18,bottom: 18),
+            child: Text(text, style: TextStyle(fontSize: 17)),
+          ),
+        ],
+      ),
       onTap: () {
         switch(opt){
           case 1: Navigator.pop(context); chooseImage();
@@ -82,12 +91,6 @@ class _editPageState extends State<EditPage> {
           });
         }
       },
-      child: Row(
-        children: <Widget>[
-          Padding( padding: const EdgeInsets.all(18)),
-          Text(text, style: TextStyle(fontSize: 14),),
-        ],
-      ),
     );
   }
 
@@ -195,8 +198,8 @@ class _editPageState extends State<EditPage> {
                                 inputFormatters: <TextInputFormatter>[
                                   WhitelistingTextInputFormatter.digitsOnly],
                                 validator: (value) {
-                                  if (value.isEmpty) {
-                                    return 'Please enter the class';
+                                  if ((int.parse(value)>10 || int.parse(value)<6) || value.isEmpty) {
+                                    return 'Only valid class range: 6 to 10';
                                   }
                                 },
                                 onSaved: (value) =>

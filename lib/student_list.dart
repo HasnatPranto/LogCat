@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -21,6 +22,7 @@ class _studentListState extends State<StudentList>{
   TextEditingController filter = new TextEditingController();
   String searhText="",sec="";
   int sc;
+  File _iFile;
   List<Student> fullList=List<Student>();
   List<Student> filteredList=List<Student>();
   bool loaded=false;
@@ -68,21 +70,26 @@ class _studentListState extends State<StudentList>{
 
   Widget resolveAvatar(Student student){
 
-    if(student.image!=""){
+    _iFile = File(student.image);
+    print(student.image);
+
+    if( student.image != ""){
       return  CircleAvatar(
         radius: 23,
         backgroundColor: Colors.deepPurpleAccent,
         child: CircleAvatar(
           radius: 21,
-          backgroundImage: MemoryImage(base64Decode(student.image)),
+          backgroundImage: FileImage(_iFile)
         ),
       );
-    }
-       // backgroundImage: MemoryImage(base64Decode(student.image)));}
-    else
+    }// backgroundImage: MemoryImage(base64Decode(student.image)));}
+    else {
+      print('else');
       return CircleAvatar(
-          backgroundColor: Colors.primaries[Random().nextInt(Colors.primaries.length)],
+          backgroundColor: Colors.primaries[Random().nextInt(
+              Colors.primaries.length)],
           child: Icon(Icons.person_outline));
+    }
   }
 
   @override  Widget build(BuildContext context) {
@@ -105,7 +112,13 @@ class _studentListState extends State<StudentList>{
           ),
         ),
         body: new Container(
-
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [Color(0xffeef2f3),Color(0xff8e9eab)]
+            )
+          ),
           child: Column(
             children: <Widget>[
             SizedBox(height: 10,),

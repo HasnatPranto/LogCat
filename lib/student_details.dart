@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flushbar/flushbar.dart';
@@ -27,7 +28,7 @@ class fullSize extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
 
-    _fi= Image.memory(base64Decode(imageString));
+    _fi= File(imageString);
 
     // TODO: implement build
     return Scaffold(
@@ -38,7 +39,7 @@ class fullSize extends StatelessWidget{
             child: Container(
               decoration: BoxDecoration(
                   image: DecorationImage(
-                      image: _fi.image,
+                      image: FileImage(File(imageString)),
                       fit: BoxFit.contain
                   )
               ),
@@ -65,7 +66,7 @@ class DetailState extends State<StudentDetail> {
     super.initState();
     if(student.image!=""){
       setState(() {
-        _image= Image.memory(base64Decode(student.image));
+        _image= Image.file(File(student.image));//Image.memory(base64Decode(student.image));
       });
     }
     else{
@@ -163,7 +164,7 @@ class DetailState extends State<StudentDetail> {
                                  border: Border.all(width:2,color: Color(0xff4b6cb7)),
                                  image: DecorationImage(
                                    image: _image.image,
-                                   fit: BoxFit.fill,
+                                   fit: BoxFit.cover
                                  ),
                                  // shape: BoxShape.circle,
                                ),

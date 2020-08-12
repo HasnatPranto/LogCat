@@ -20,7 +20,7 @@ class _FormPageState extends State<FormPage> {
 
   Widget cava= CircleAvatar(backgroundColor:Colors.blueGrey[100], radius:45,child:Icon(Icons.account_circle,size: 60,color: Colors.black12,));
   final _formKey = GlobalKey<FormState>();
-  String _studentName,_studentCls,_studentRoll,_studentGrp,_studentGN,_studentPN,_studentSection,imgStr="",year;
+  String _studentName,_studentCls,_studentRoll,_studentGrp,_studentGN,_studentPN,_studentSection,imgStr="",year,imgPath="";
   DBHelper dbHelper;
    bool imgExist=false;
 
@@ -46,8 +46,9 @@ class _FormPageState extends State<FormPage> {
         },
         child: Row(
           children: <Widget>[
-            Padding( padding: const EdgeInsets.all(18)),
-            Text(text, style: TextStyle(fontSize: 14),),
+            Padding( padding: const EdgeInsets.only(left:30,top:18,bottom: 18),
+              child: Text(text, style: TextStyle(fontSize: 17)),
+            ),
           ],
         ),
       );
@@ -56,20 +57,28 @@ class _FormPageState extends State<FormPage> {
     showModalBottomSheet(
       context: context,
       builder: (context) => Wrap(
+
         children: <Widget>[
-         sheetRow(context,'Choose another picture',1),
+          sheetRow(context,'Choose another picture',1),
           sheetRow(context,'Remove picture',2),
         ],
       ),
     );
   }
+  bool classCheck(String value){
+    int i= int.parse(value);
+    bool b;
+    (i>10 && i<6)? b= false : b= true;
+    return b;
+  }
   Future chooseImage() async{
 
      var image= await ImagePicker.pickImage(source: ImageSource.gallery);
-     bytes = image.readAsBytesSync();
+     //bytes = image.readAsBytesSync();
 
      setState(() {
-      imgStr=base64.encode(bytes);
+       imgPath = image.path;
+      //imgStr=base64.encode(bytes);
       imgExist = true;
       cava = CircleAvatar(
           radius: 45,
@@ -101,10 +110,7 @@ class _FormPageState extends State<FormPage> {
            gradient: LinearGradient(
              begin: Alignment.topCenter,
              end: Alignment.bottomCenter,
-             colors: [
-               Color(0xFFddf5ff),
-               Color(0xFF8cbbe0),
-             ],
+               colors: [Color(0xffeef2f3),Color(0xff8e9eab)]
            )
          ),
             padding:
@@ -174,8 +180,8 @@ class _FormPageState extends State<FormPage> {
                               inputFormatters: <TextInputFormatter>[
                           WhitelistingTextInputFormatter.digitsOnly],
                             validator: (value) {
-                              if (value.isEmpty) {
-                                return 'Please enter the class';
+                              if ((int.parse(value)>10 || int.parse(value)<6) || value.isEmpty) {
+                                return 'Only valid class range: 6 to 10';
                               }
                             },
                             onSaved: (value) =>
@@ -342,7 +348,7 @@ class _FormPageState extends State<FormPage> {
             final form = _formKey.currentState;
             if (form.validate()) {
               form.save();
-              dbHelper.add(Student(null, _studentName,imgStr,_studentRoll,_studentCls,year,_studentSection,_studentGrp,_studentGN,_studentPN));
+              dbHelper.add(Student(null, _studentName,imgPath,_studentRoll,_studentCls,year,_studentSection,_studentGrp,_studentGN,_studentPN));
               Scaffold.of(context).showSnackBar(SnackBar(content: Text('One New Entry Added..')));
               await Future.delayed(Duration(milliseconds: 2000), () {});
               Navigator.pop(context);
