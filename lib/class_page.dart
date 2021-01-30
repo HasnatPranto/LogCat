@@ -17,9 +17,11 @@ class _DashboardState extends State<Dashboard> {
             flexibleSpace: Container(
               decoration: BoxDecoration(
                   gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.topRight,
-                      colors: [Color(0xff3a7bd5),Color(0xff3B4371)],
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                      //colors: [Color(0xffede5c7),Color(0xffcc8a53), Color(0xffcb7633)]
+                      colors: [Color(0xffbf953f),Color(0xfffcf6ba),Color(0xffb38728)]
+                    //colors: [Color(0xff3a7bd5),Color(0xff3B4371)],
                   ),
               ),
             ),
@@ -44,8 +46,8 @@ class _DashboardState extends State<Dashboard> {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-              colors: [Color(0xff4389A2),Color(0xff5C258D)]
-            // colors: [Color(0xfffdbb2d),Color(0xffb21f1f),Color(0xff1a2a6c)]
+              colors: [Color(0xffd7dde8),Color(0xffFFEFBA)]
+             //colors: [Color(0xffbf953f),Color(0xfffcf6ba),Color(0xffb38728),Color(0xfffbf5b7),Color(0xffaa771c)]
           )
         ),
         padding: EdgeInsets.symmetric(vertical: 18.0, horizontal: 2.0),
@@ -59,6 +61,7 @@ class _DashboardState extends State<Dashboard> {
             makeDashboardItem("Class VIII", Icons.filter_8,48,40,51),
             makeDashboardItem("Class IX", Icons.filter_9,0,83,63),
             makeDashboardItem("Class X", Icons.spa,251,120,19),
+            makeDashboardItem("Former\nStudents", Icons.check_circle,217,1,102),
           ],
         ),
       ),
@@ -115,6 +118,9 @@ class _DashboardState extends State<Dashboard> {
                 else if(title=="Class X")
                   Navigator.push(
                       context, MaterialPageRoute(builder: (context) => StudentList(selectedClass: 10)));
+                else if(title=="Former\nStudents")
+                  Navigator.push(
+                      context, MaterialPageRoute(builder: (context) => StudentList(selectedClass: 0)));
               },
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -122,22 +128,49 @@ class _DashboardState extends State<Dashboard> {
                 verticalDirection: VerticalDirection.down,
                 children: <Widget>[
                   SizedBox(height: 50.0),
+                /*Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                            color: Colors.black45,
+                            blurRadius: 10.0,
+                            spreadRadius: 2.0,
+                            offset: Offset(5.0, 10.0))
+                      ]),*/
                   Center(
-                    child: CircleAvatar(
-                      radius: 35,
-                      backgroundColor: Color.fromRGBO(r, g, b, 1),
-                      child: Icon(
-                        icon,
-                        size: 30.0,
-                        color:Colors.white,
-                      ) ,
-                    )
+                      child: Ink(
+                        height: 75,
+                        width: 75,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                              begin: Alignment.bottomRight,
+                              end: Alignment.topLeft,
+                              colors: [Color.fromRGBO(r,g,b,1.0),Color.fromRGBO(r, g, b, .25)]
+                          ),
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                  color: Colors.black26,
+                                  blurRadius: 8.0,
+                                  offset: Offset(5.0, 8.0))
+                            ]),
+                        child:  CircleAvatar(
+                          radius: 35,
+                          backgroundColor: Colors.transparent,
+                          child: Icon(
+                            icon,
+                            size: 30.0,
+                            color:Colors.white,
+                          ) ,
+                        ),
+                      ),
                   ),
                   SizedBox(height: 15.0),
                   new Center(
                     child: new Text(title,
                         style:
-                        new TextStyle(fontSize: 17.0, color: Colors.white)),
+                        new TextStyle(fontFamily:'Lobster',fontSize: 20.0, color: Color(0xff1F1C18))),
                   )
                 ],
               ),
